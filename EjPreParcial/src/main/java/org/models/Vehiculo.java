@@ -24,6 +24,14 @@ public class Vehiculo {
     @Column(nullable = false)
     private boolean disponibilidad;
 
+    public Vehiculo(){};
+    public Vehiculo(String patenteVeh, String marcaV, String modeloV, double precio, boolean disp){
+        this.patente=patenteVeh;
+        this.marca= marcaV;
+        this.modelo=modeloV;
+        this.precioRenta= precio;
+        this.disponibilidad=disp;
+    }
 
     public boolean getDisponibilidad() {
         return disponibilidad;

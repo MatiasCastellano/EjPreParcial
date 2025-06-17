@@ -28,6 +28,19 @@ public class Reserva {
     @Column(nullable = false)
     private double costoTotal;
 
+    @Column(nullable = false)
+    private Estado estado;
+
+    public Reserva(){}
+
+    public Reserva(String nombre,Vehiculo vehiculo,LocalDate fechaI, LocalDate fechaF, double costo){
+        this.nombreCliente=nombre;
+        this.vehiculo=vehiculo;
+        this.fechaInicio=fechaI;
+        this.fechaFin=fechaF;
+        this.costoTotal=costo;
+        this.estado=Estado.RESERVED;
+    }
     public double getCostoTotal() {
         return costoTotal;
     }
