@@ -9,26 +9,28 @@ import java.time.LocalDate;
 public class Reserva {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="reservation_id")
     private long idReserva;
 
 
-    @Column(nullable = false,length =100)
+    @Column(name="client_name",nullable = false,length =100)
     private String nombreCliente;
 
     @ManyToOne
     @JoinColumn(name= "vehicle_id")
     private Vehiculo vehiculo;
 
-    @Column(nullable = false)
+    @Column(name="start_date",nullable = false)
     private LocalDate fechaInicio;
 
-    @Column(nullable = false)
+    @Column(name="end_date",nullable = false)
     private LocalDate fechaFin;
 
-    @Column(nullable = false)
+    @Column(name="total_cost", nullable = false)
     private double costoTotal;
 
-    @Column(nullable = false)
+    @Column(name="status",nullable = false)
+    @Enumerated(EnumType.STRING)
     private Estado estado;
 
     public Reserva(){}
@@ -87,6 +89,13 @@ public class Reserva {
 
     public void setIdReserva(long idReserva) {
         this.idReserva = idReserva;
+    }
+
+    public void setEstado(Estado estado1){
+        this.estado=estado1;
+    }
+    public Estado getEstado(){
+        return estado;
     }
 
     public enum Estado{

@@ -7,21 +7,22 @@ import jakarta.persistence.*;
 public class Vehiculo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name= "vehicle_id")
     private long id;
 
-    @Column(nullable = false, length = 12)
+    @Column(name="plate_number", nullable = false, length = 12)
     private String patente;
 
-    @Column(nullable = false, length = 20)
+    @Column(name="brand", nullable = false, length = 20)
     private String marca;
 
-    @Column(nullable = false, length = 20)
+    @Column(name= "model", nullable = false, length = 20)
     private String modelo;
 
-    @Column(nullable = false)
+    @Column(name= "daily_rate", nullable = false)
     private double precioRenta;
 
-    @Column(nullable = false)
+    @Column(name= "available",  nullable = false)
     private boolean disponibilidad;
 
     public Vehiculo(){};
