@@ -7,16 +7,24 @@ public class ReservaDTO {
     private String nombreCliente;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
+    private VehiculoDTO vehiculoDTO;
     private double costo;
     private EstadoDTO estadoDTO;
 
     public ReservaDTO(){};
-    public ReservaDTO(String nombre, LocalDate fechaI,LocalDate fechaF, double costoRes){
+    public ReservaDTO(String nombre, LocalDate fechaI,LocalDate fechaF,VehiculoDTO vehiculo,double costoRes){
         this.nombreCliente=nombre;
         this.fechaInicio=fechaI;
+        this.vehiculoDTO= vehiculo;
         this.fechaFin=fechaF;
         this.costo=costoRes;
         this.estadoDTO=EstadoDTO.RESERVED;
+    }
+    public void setVehiculoDTO(VehiculoDTO vehiculo){
+        this.vehiculoDTO=vehiculo;
+    }
+    public VehiculoDTO getvehiculo(){
+        return this.vehiculoDTO;
     }
     public long getId() {
         return id;

@@ -1,12 +1,10 @@
 package org;
 
-import org.dto.FinalizarReservaDTO;
-import org.dto.NuevaReservaDTO;
-import org.dto.ReservaDTO;
-import org.dto.ResultadoDTO;
+import org.dto.*;
 import org.service.Logica;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Scanner;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
@@ -19,6 +17,8 @@ public class Main {
             ResultadoDTO resultado= new ResultadoDTO();
             Scanner in = new Scanner(System.in);
             while (continuar) {
+                LocalDate fechaInicioFiltro= null;
+                LocalDate fechaFinFiltro=null;
                 mostrarMenu();
                 int accion = in.nextInt();
                 switch (accion) {
@@ -50,6 +50,33 @@ public class Main {
                         resultado= logica.finalizarReserva(fin);
                         imprimirResultado(resultado);
                         break;
+                    case 3:
+                        in.nextLine();
+                        System.out.println("Ingrese el nombre del cliente que desea filtrar(obligatorio):");
+                        nombre= in.nextLine();
+                        in.nextLine();
+                        System.out.println("Ingrese la fecha INICIO(yyyy-MM-dd), si desea filtrar por ella(opcional)");
+                        fechaI = in.nextLine();
+                        System.out.println("Ingrese la fecha FIN(yyyy-MM-dd), si desea filtrar por ella(opcional)");
+                        fechaF = in.nextLine();
+                        System.out.println("Ingrese si desea filtrar por el estado de la reserva: 0) Reserved 1)Completed 2)Cancelled o 3 si desea no filtrar por el");
+                        int num= in.nextInt();
+                        in.nextLine();
+                        System.out.println("Ingrese la marca si desea filtrar por ella");
+                        String marca= in.nextLine();
+                        if(!fechaI.isEmpty()){
+                            fechaInicioFiltro=LocalDate.parse(fechaI);
+                        }
+                        if(!fechaF.isEmpty()){
+                            fechaFinFiltro=LocalDate.parse(fechaF);
+                        }
+                        ReservaDTO.EstadoDTO estado=null;
+                        if(num!=3){
+                            estado= ReservaDTO.EstadoDTO.values()[num];
+                        }
+                        FiltrosReservaDTO filtros= new FiltrosReservaDTO(nombre,fechaInicioFiltro,fechaFinFiltro,estado,marca);
+                        List<ReservaDTO> reservasDto= logica.buscarReservas(filtros);
+                        imprimirLista(reservasDto);
                     case 4:
                         continuar = false;
                         break;
@@ -73,6 +100,16 @@ public class Main {
                 System.out.println(resultado.getMensaje());
             } else {
                 System.out.println(resultado.getMensaje());
+            }
+        }
+        private static void imprimirLista(List<ReservaDTO> reservasDTO){
+            for(ReservaDTO r:reservasDTO){
+                System.out.println("Id reserva"+r.getId());
+                System.out.println("Nombre reserva"+r.getNombreCliente());
+                System.out.println("Costo reserva"+r.getCosto());
+                System.out.println("Fecha Inicio reserva"+r.getFechaInicio());
+                System.out.println("Fecha Fin reserva"+r.getFechaFin());
+                System.out.println("Marca del auto usado"+ r.getvehiculo().getMarca());
             }
         }
 

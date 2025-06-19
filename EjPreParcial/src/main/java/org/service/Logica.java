@@ -118,17 +118,19 @@ public class Logica {
                 predicate.add(cb.lessThanOrEqualTo(reserva.get("fechaInicio"),filtros.getFechaFin()));
             }
             if(filtros.getEstado()!=null){
-                predicate.add(cb.equal(reserva.get("estado"),filtros.getEstado()));
+                Reserva.Estado estadoParametro= Reserva.Estado.valueOf(filtros.getEstado().name());
+                predicate.add(cb.equal(reserva.get("estado"),estadoParametro));
             }
             if(!(filtros.getMarca().isEmpty())){
                 predicate.add(cb.like(vehiculo.get("marca"),filtros.getMarca()));
             }
-            
-        }
+            query.select(reserva).where(cb.and(predicate.toArray(new Predicate[0]))).orderBy(cb.desc(reserva.get("fechaInicio")));
 
-        return reservasFiltradas;
+            List<Reserva> reservasList= session.createQuery(query).getResultList();
+            reservasFiltradas= convertirReservaAReservaDTO(reservasList);
+            return reservasFiltradas;
+        }
     }
-    //convert Reserva a ReservaDTO
 
     public List<ReservaDTO> convertirReservaAReservaDTO(List<Reserva> reservas){
         List<ReservaDTO> reservasConvertidas= new ArrayList<>();
@@ -138,10 +140,22 @@ public class Logica {
             rDto.setNombreCliente(r.getNombreCliente());
             rDto.setEstadoDTO(ReservaDTO.EstadoDTO.valueOf(r.getEstado().name())); //Convertir de estado a EstadoDTO
             rDto.setCosto(r.getCostoTotal());
+            rDto.setVehiculoDTO(convertirVehiculoAVehiculoDTO(r.getVehiculo()));
             rDto.setFechaInicio(r.getFechaInicio());
             rDto.setFechaFin(r.getFechaFin());
             reservasConvertidas.add(rDto);
         }
         return reservasConvertidas;
+    }
+    public VehiculoDTO convertirVehiculoAVehiculoDTO(Vehiculo veh){
+        if(veh==null){return null;}
+        VehiculoDTO vDto= new VehiculoDTO();
+        vDto.setDisponibilidad(veh.getDisponibilidad());
+        vDto.setId(veh.getId());
+        vDto.setMarca(veh.getMarca());
+        vDto.setModelo(veh.getModelo());
+        vDto.setPatente(veh.getPatente());
+        vDto.setPrecioRenta(veh.getPrecioRenta());
+        return vDto;
     }
 }

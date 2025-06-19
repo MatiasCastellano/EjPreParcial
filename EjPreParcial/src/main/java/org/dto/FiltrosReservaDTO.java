@@ -44,11 +44,11 @@ public class FiltrosReservaDTO {
         this.fechaFin = fechaFin;
     }
 
-    public Reserva.Estado getEstado() {
+    public ReservaDTO.EstadoDTO getEstado() {
         return estado;
     }
 
-    public void setEstado(Reserva.Estado estado) {
+    public void setEstado(ReservaDTO.EstadoDTO estado) {
         this.estado = estado;
     }
 
