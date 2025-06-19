@@ -121,7 +121,7 @@ public class Logica {
                 Reserva.Estado estadoParametro= Reserva.Estado.valueOf(filtros.getEstado().name());
                 predicate.add(cb.equal(reserva.get("estado"),estadoParametro));
             }
-            if(!(filtros.getMarca().isEmpty())){
+            if(filtros.getMarca()!=null &&  !(filtros.getMarca().isEmpty())){
                 predicate.add(cb.like(vehiculo.get("marca"),filtros.getMarca()));
             }
             query.select(reserva).where(cb.and(predicate.toArray(new Predicate[0]))).orderBy(cb.desc(reserva.get("fechaInicio")));
