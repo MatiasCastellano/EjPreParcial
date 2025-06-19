@@ -1,12 +1,7 @@
 package org.service;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import org.dto.FinalizarReservaDTO;
-import org.dto.NuevaReservaDTO;
-import org.dto.ResultadoDTO;
+import jakarta.persistence.criteria.*;
+import org.dto.*;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.models.Reserva;
@@ -14,6 +9,7 @@ import org.models.Vehiculo;
 import org.utils.HibernateUtil;
 
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Logica {
@@ -102,5 +98,50 @@ public class Logica {
             transaction.commit();
             return resultado;
         }
+    }
+
+    //Buscar Reservas con filtros dinamicos
+    public List<ReservaDTO> buscarReservas(FiltrosReservaDTO filtros){
+        List<ReservaDTO> reservasFiltradas= new ArrayList<>();
+        try(Session session=HibernateUtil.getSession()){
+            Transaction transaccion= session.beginTransaction();
+            CriteriaBuilder cb= session.getCriteriaBuilder();
+            CriteriaQuery<Reserva> query= cb.createQuery(Reserva.class);
+            Root<Reserva> reserva= query.from(Reserva.class);
+            Join<Reserva,Vehiculo> vehiculo= reserva.join("vehiculo");
+            List<Predicate> predicate= new ArrayList<>();
+            predicate.add(cb.like(reserva.get("nombreCliente"),filtros.getNombreCliente())); //el de nombre es obligatorio.
+            if(filtros.getFechaInicio()!=null){
+                predicate.add(cb.greaterThanOrEqualTo(reserva.get("fechaInicio"),filtros.getFechaInicio()));
+            }
+            if(filtros.getFechaFin()!=null){
+                predicate.add(cb.lessThanOrEqualTo(reserva.get("fechaInicio"),filtros.getFechaFin()));
+            }
+            if(filtros.getEstado()!=null){
+                predicate.add(cb.equal(reserva.get("estado"),filtros.getEstado()));
+            }
+            if(!(filtros.getMarca().isEmpty())){
+                predicate.add(cb.like(vehiculo.get("marca"),filtros.getMarca()));
+            }
+            
+        }
+
+        return reservasFiltradas;
+    }
+    //convert Reserva a ReservaDTO
+
+    public List<ReservaDTO> convertirReservaAReservaDTO(List<Reserva> reservas){
+        List<ReservaDTO> reservasConvertidas= new ArrayList<>();
+        for(Reserva r:reservas){
+            ReservaDTO rDto= new ReservaDTO();
+            rDto.setId(r.getIdReserva());
+            rDto.setNombreCliente(r.getNombreCliente());
+            rDto.setEstadoDTO(ReservaDTO.EstadoDTO.valueOf(r.getEstado().name())); //Convertir de estado a EstadoDTO
+            rDto.setCosto(r.getCostoTotal());
+            rDto.setFechaInicio(r.getFechaInicio());
+            rDto.setFechaFin(r.getFechaFin());
+            reservasConvertidas.add(rDto);
+        }
+        return reservasConvertidas;
     }
 }
